@@ -51,3 +51,14 @@ build/
 art/previews/
 art/.DS_Store
 art/Thumbs.db
+
+/.backup/
+/.venv/
+/.vscode/
+/.idea/
+/.pytest_cache/
+/.ruff_cache/
+/.coverage/
+/.mypy_cache/
+/.pytest_cache/
+/.ruff_cache/
