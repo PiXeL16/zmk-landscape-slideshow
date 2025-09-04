@@ -1,0 +1,8 @@
+# Python dependencies for ZMK Landscape Art Gallery Generator
+
+# Core image processing library
+Pillow>=10.0.0
+
+# Advanced image processing capabilities  
+numpy>=1.24.0
+scipy>=1.10.0

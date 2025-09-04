@@ -36,12 +36,6 @@ const lv_img_dsc_t *anim_imgs[] = {
 
 
 
-
-
-
-
-
-
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 struct peripheral_status_state {

@@ -1,11 +1,34 @@
 # Hammerbeam Slideshow
-This is a zmk module to implement a slideshow of 30 of Hammerbeam's 1 bit art on the peripheral (right) nice!view display.
+
+This is a zmk module to implement a slideshow of images on the peripheral (right) nice!view display.
 
 Hammerbeam, _the original artist of the iconic balloon and mountain art found in the default zmk firmware for the nice!view screen_, has more fantastic 1 bit art that you may not have seen.
 
 With Hammerbeam's consent, he allowed me use what I wanted of his public posts of his 1-bit art and format them as necessary to bring more of his work to the nice!view display. I made sure to keep his signature in each picture for attribution so others can find more of his work.
 
-The picture to be displayed by this module on the peripheral screen will be one of these 30 and will change every 10 seconds.
+## NEW: Automated Art Generation
+
+This project now includes an automated art generation system! You can easily create your own custom slideshows:
+
+```bash
+# Quick start - handles everything automatically!
+make setup              # Install dependencies
+cp your_images/* art/   # Add your images (any names)
+make generate           # Auto-rename + generate slideshow
+```
+
+**[Complete Art Generation Guide →](ART_GENERATION.md)**
+
+## Features
+
+- **Custom Art Support**: Generate slideshows from your own images
+- **Automated Processing**: Resize and convert images to 1-bit format
+- **Easy Workflow**: Simple Makefile commands for everything
+- **Safety Features**: Automatic backups and validation
+- **Perfect Fit**: Optimized for 68×140 nice!view display (vertical)
+
+The picture displayed on the peripheral screen changes every 10 seconds by default.
+
 ![art](./assets/hammerbeam.png)
 
 ![art](./assets/20240913_193934.png)
@@ -45,14 +68,35 @@ include:
     shield: urchin_right nice_view_adapter nice_view_custom #custom shield
 ```
 
-by default the this urchin animation will run for a duration of 300 seconds, 10 seconds per picture, fairly slow to save battery
+By default this animation will run for a duration of 300 seconds (10 seconds per picture) to save battery.
 
 If you want to change the speed of the animation, you can edit the speed by changing the CONFIG_CUSTOM_ANIMATION_SPEED in your .conf file
 
 For example:
 
 ```conf
-# urchin.conf
+# config.conf
 CONFIG_CUSTOM_ANIMATION_SPEED=300000 # 300 second total duration
-# 30 pictures, so 10 seconds per picture
+# With 30 pictures, that's 10 seconds per picture
 ```
+
+## Art Generation Commands
+
+| Command | What it does |
+|---------|-------------|
+| `make help` | Show all available commands |
+| `make setup` | Install dependencies and create folders |
+| `make generate` | Create slideshow from your images |
+| `make info` | Show project status |
+| `make backup` | Backup current files |
+| `make restore` | Restore from backup |
+
+## Requirements
+
+- Python 3.7+
+- Pillow (PIL) for image processing
+- Make (for convenient commands)
+
+## Contributing
+
+Found a bug or want to add features? Contributions welcome! The art generation system is designed to be easily extensible.
