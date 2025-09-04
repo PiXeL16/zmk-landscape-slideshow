@@ -78,14 +78,15 @@ def calculate_aspect_ratio_size(orig_size, target_size):
     new_height = int(orig_height * scale)
     
     if needs_padding:
-        # Calculate padding to position image at bottom of frame (only when needed)
+        # Calculate padding to center image with gradient transition areas
         pad_left = (target_width - new_width) // 2  # Center horizontally
-        pad_top = target_height - new_height  # All padding at top (bottom-align)
+        pad_top = (target_height - new_height) // 2  # Center vertically
+        pad_bottom = target_height - new_height - pad_top  # Remaining space at bottom
     else:
         # No padding needed - aspect ratios match closely
-        pad_left = pad_top = 0
+        pad_left = pad_top = pad_bottom = 0
     
-    return new_width, new_height, pad_left, pad_top, needs_padding
+    return new_width, new_height, pad_left, pad_top, pad_bottom, needs_padding
 
 def resize_with_1bit_optimization(img, target_size, method="content_aware", maintain_aspect_ratio=True):
     """
@@ -99,16 +100,16 @@ def resize_with_1bit_optimization(img, target_size, method="content_aware", main
     
     if maintain_aspect_ratio:
         # Calculate aspect-ratio preserving dimensions
-        new_width, new_height, pad_left, pad_top, needs_padding = calculate_aspect_ratio_size(img.size, target_size)
+        new_width, new_height, pad_left, pad_top, pad_bottom, needs_padding = calculate_aspect_ratio_size(img.size, target_size)
         if needs_padding:
-            print(f"    Aspect ratio preserved: {orig_width}x{orig_height} -> {new_width}x{new_height} (padding: left={pad_left}, top={pad_top} - bottom-aligned)")
+            print(f"    Aspect ratio preserved: {orig_width}x{orig_height} -> {new_width}x{new_height} (padding: top={pad_top}, bottom={pad_bottom} - centered with gradient)")
         else:
             print(f"    Aspect ratios match: {orig_width}x{orig_height} -> {new_width}x{new_height} (no padding needed)")
         actual_target = (new_width, new_height)
     else:
         actual_target = target_size
         new_width, new_height = target_width, target_height
-        pad_left = pad_top = 0
+        pad_left = pad_top = pad_bottom = 0
         needs_padding = False
     
     # Remove the duplicate method handling sections with return statements
@@ -193,14 +194,181 @@ def resize_with_1bit_optimization(img, target_size, method="content_aware", main
     
     # Apply padding if maintaining aspect ratio AND aspect ratios don't match
     if maintain_aspect_ratio and needs_padding and (pad_left > 0 or pad_top > 0):
-        print(f"    Adding padding to bottom-align image: left={pad_left}, top={pad_top}")
-        # Create new image with target size and black background
-        padded_img = Image.new('L', target_size, 0)  # Black background
-        # Paste the resized image at the bottom (with top padding)
-        padded_img.paste(img, (pad_left, pad_top))
+        print(f"    Adding centered padding with intelligent gradient: left={pad_left}, top={pad_top}, bottom={pad_bottom}")
+        # Create centered image with intelligent gradient transition (only when aspect ratios differ)
+        padded_img = create_centered_image_with_gradient(img, target_size, pad_left, pad_top, pad_bottom, use_intelligent_gradients=True)
+        return padded_img
+    elif maintain_aspect_ratio and (pad_left > 0 or pad_top > 0):
+        print(f"    Adding simple padding (aspect ratios match): left={pad_left}, top={pad_top}, bottom={pad_bottom}")
+        # Simple padding without gradient (aspect ratios are close enough)
+        padded_img = create_centered_image_with_gradient(img, target_size, pad_left, pad_top, pad_bottom, use_intelligent_gradients=False)
         return padded_img
         
     return img
+
+def create_centered_image_with_gradient(img, target_size, pad_left, pad_top, pad_bottom, use_intelligent_gradients=True):
+    """
+    Create a centered image with gradient transitions in the padding areas.
+    
+    Args:
+        img: The resized image to center
+        target_size: (width, height) of the final image
+        pad_left: Left padding (for horizontal centering)
+        pad_top: Top padding 
+        pad_bottom: Bottom padding
+        use_intelligent_gradients: If True, use background color detection for gradients
+    
+    Returns:
+        PIL Image with centered image and gradient padding
+    """
+    from PIL import Image, ImageDraw
+    import numpy as np
+    
+    target_width, target_height = target_size
+    
+    # Create new image with black background
+    result = Image.new('L', target_size, 0)
+    
+    # Create gradient areas if there's vertical padding AND gradients are needed
+    if use_intelligent_gradients and (pad_top > 0 or pad_bottom > 0):
+        # Create numpy array for easier gradient manipulation
+        result_array = np.zeros((target_height, target_width), dtype=np.uint8)
+        
+        # Analyze overall image to determine consistent gradient direction
+        img_array = np.array(img)
+        
+        # Sample the entire image to get overall brightness
+        overall_brightness = int(np.mean(img_array))
+        
+        # Determine consistent gradient colors for the entire image
+        if overall_brightness < 128:  # Dark image
+            gradient_color = 0  # Use pure black
+            gradient_name = "black"
+        else:  # Light image  
+            gradient_color = 255  # Use pure white
+            gradient_name = "white"
+        
+        print(f"      Consistent gradient: {gradient_name} (overall brightness: {overall_brightness})")
+        
+        # Top gradient (fade from pure color to image edge)
+        if pad_top > 0:
+            # Get the immediate edge color for transition
+            immediate_edge = int(np.mean(img_array[0, :]))
+            
+            # Create gradient from pure color to immediate edge
+            for y in range(pad_top):
+                # Gradient progress: from start color to edge color
+                progress = (y + 1) / pad_top  # 0 to 1
+                # Use easing function for smoother transition
+                eased_progress = progress * progress * (3 - 2 * progress)  # Smooth step
+                
+                # Blend from gradient_color to immediate_edge
+                gradient_value = int(gradient_color + (immediate_edge - gradient_color) * eased_progress)
+                gradient_value = max(0, min(255, gradient_value))  # Clamp to valid range
+                result_array[y, :] = gradient_value
+        
+        # Bottom gradient (fade from image edge to pure color)
+        if pad_bottom > 0:
+            # Get the immediate edge color for transition
+            immediate_edge = int(np.mean(img_array[-1, :]))
+            
+            # Create gradient from immediate edge to pure color
+            bottom_start = target_height - pad_bottom
+            for y in range(pad_bottom):
+                # Gradient progress: from edge color to end color
+                progress = y / pad_bottom  # 0 to 1
+                # Use easing function for smoother transition
+                eased_progress = progress * progress * (3 - 2 * progress)  # Smooth step
+                
+                # Blend from immediate_edge to gradient_color
+                gradient_value = int(immediate_edge + (gradient_color - immediate_edge) * eased_progress)
+                gradient_value = max(0, min(255, gradient_value))  # Clamp to valid range
+                result_array[bottom_start + y, :] = gradient_value
+        
+        # Convert back to PIL Image
+        result = Image.fromarray(result_array, 'L')
+    elif pad_top > 0 or pad_bottom > 0:
+        # Simple padding without gradients - just keep black background
+        print(f"      Using simple black padding (no gradient needed)")
+    
+    # Paste the original image in the center
+    result.paste(img, (pad_left, pad_top))
+    
+    return result
+
+def create_slideshow_collage(image_files, processed_images):
+    """
+    Create a grid collage of all processed images for README showcase.
+    
+    Args:
+        image_files: List of original image file paths
+        processed_images: List of processed PIL images (1-bit)
+    
+    Returns:
+        PIL Image collage saved to assets folder
+    """
+    from PIL import Image, ImageDraw, ImageFont
+    import math
+    
+    if not processed_images:
+        print("No processed images to create collage")
+        return None
+    
+    # Configuration
+    cell_width, cell_height = DISPLAY_WIDTH * 3, DISPLAY_HEIGHT * 3  # 3x scale for visibility
+    padding = 10
+    
+    # Calculate grid dimensions (prefer wider than tall)
+    num_images = len(processed_images)
+    cols = math.ceil(math.sqrt(num_images * 1.5))  # Slightly prefer wider
+    rows = math.ceil(num_images / cols)
+    
+    # Calculate canvas size (no title needed)
+    canvas_width = cols * (cell_width + padding) - padding
+    canvas_height = rows * (cell_height + padding) - padding
+    
+    print(f"Creating {cols}×{rows} collage ({canvas_width}×{canvas_height}px) with {num_images} images...")
+    
+    # Create canvas
+    canvas = Image.new('RGB', (canvas_width, canvas_height), 'white')
+    
+    # Add images to grid
+    for idx, (img_file, processed_img) in enumerate(zip(image_files, processed_images)):
+        row = idx // cols
+        col = idx % cols
+        
+        # Calculate position
+        x = col * (cell_width + padding)
+        y = row * (cell_height + padding)
+        
+        # Scale up the 1-bit image for visibility
+        if processed_img.mode == '1':
+            # Convert 1-bit to RGB for better visibility
+            display_img = processed_img.convert('RGB')
+        else:
+            display_img = processed_img.convert('RGB')
+        
+        # Scale up 3x
+        scaled_img = display_img.resize((cell_width, cell_height), Image.NEAREST)
+        
+        # Add border
+        bordered_img = Image.new('RGB', (cell_width + 2, cell_height + 2), 'black')
+        bordered_img.paste(scaled_img, (1, 1))
+        
+        # Paste to canvas
+        canvas.paste(bordered_img, (x, y))
+    
+    # Save to assets folder
+    assets_dir = Path("assets")
+    assets_dir.mkdir(exist_ok=True)
+    
+    collage_path = assets_dir / "slideshow_preview.png"
+    canvas.save(collage_path)
+    
+    print(f"Slideshow collage saved: {collage_path}")
+    print(f"Dimensions: {canvas_width}×{canvas_height}px with {num_images} images in {cols}×{rows} grid")
+    
+    return canvas
 
 def apply_1bit_optimized_preprocessing(img):
     """
@@ -654,6 +822,9 @@ def generate_art_c_file(save_previews=True):
     
     # Process each image
     successful_images = []
+    processed_images = []  # Store processed images for collage
+    processed_files = []   # Store corresponding file paths
+    
     for i, img_file in enumerate(image_files, 1):
         print(f"Processing {img_file.name}...")
         
@@ -661,6 +832,10 @@ def generate_art_c_file(save_previews=True):
         img = resize_and_convert_image(img_file, save_preview=False, scaling_method="content_aware", dither_method="error_diffusion", maintain_aspect_ratio=True)
         if img is None:
             continue
+        
+        # Store processed image for collage
+        processed_images.append(img)
+        processed_files.append(img_file)
         
         # Convert to LVGL data
         try:
@@ -689,6 +864,11 @@ def generate_art_c_file(save_previews=True):
         
         if save_previews and 'preview_dir' in locals():
             print(f"Preview images saved to: {preview_dir}")
+        
+        # Create slideshow collage for README showcase
+        if processed_images:
+            print()
+            create_slideshow_collage(processed_files, processed_images)
         
         return successful_images
     except Exception as e:

@@ -24,10 +24,143 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include "peripheral_status.h"
 
 LV_IMG_DECLARE(image1);
+LV_IMG_DECLARE(image2);
+LV_IMG_DECLARE(image3);
+LV_IMG_DECLARE(image4);
+LV_IMG_DECLARE(image5);
+LV_IMG_DECLARE(image6);
+LV_IMG_DECLARE(image7);
+LV_IMG_DECLARE(image8);
+LV_IMG_DECLARE(image9);
+LV_IMG_DECLARE(image10);
+LV_IMG_DECLARE(image11);
+LV_IMG_DECLARE(image12);
+LV_IMG_DECLARE(image13);
+LV_IMG_DECLARE(image14);
+LV_IMG_DECLARE(image15);
+LV_IMG_DECLARE(image16);
+LV_IMG_DECLARE(image17);
+LV_IMG_DECLARE(image18);
+LV_IMG_DECLARE(image19);
+LV_IMG_DECLARE(image20);
+LV_IMG_DECLARE(image21);
+LV_IMG_DECLARE(image22);
+LV_IMG_DECLARE(image23);
+LV_IMG_DECLARE(image24);
+LV_IMG_DECLARE(image25);
+LV_IMG_DECLARE(image26);
+LV_IMG_DECLARE(image27);
+LV_IMG_DECLARE(image28);
+LV_IMG_DECLARE(image29);
+LV_IMG_DECLARE(image30);
+LV_IMG_DECLARE(image31);
+LV_IMG_DECLARE(image32);
+LV_IMG_DECLARE(image33);
+LV_IMG_DECLARE(image34);
+LV_IMG_DECLARE(image35);
+LV_IMG_DECLARE(image36);
+LV_IMG_DECLARE(image37);
+LV_IMG_DECLARE(image38);
+LV_IMG_DECLARE(image39);
+LV_IMG_DECLARE(image40);
+LV_IMG_DECLARE(image41);
+LV_IMG_DECLARE(image42);
+LV_IMG_DECLARE(image43);
+LV_IMG_DECLARE(image44);
+LV_IMG_DECLARE(image45);
+LV_IMG_DECLARE(image46);
+LV_IMG_DECLARE(image47);
+LV_IMG_DECLARE(image48);
+LV_IMG_DECLARE(image49);
+LV_IMG_DECLARE(image50);
+LV_IMG_DECLARE(image51);
+LV_IMG_DECLARE(image52);
+LV_IMG_DECLARE(image53);
+LV_IMG_DECLARE(image54);
+LV_IMG_DECLARE(image55);
+LV_IMG_DECLARE(image56);
+LV_IMG_DECLARE(image57);
+LV_IMG_DECLARE(image58);
+LV_IMG_DECLARE(image59);
+LV_IMG_DECLARE(image60);
+LV_IMG_DECLARE(image61);
 
 const lv_img_dsc_t *anim_imgs[] = {
     &image1,
+    &image2,
+    &image3,
+    &image4,
+    &image5,
+    &image6,
+    &image7,
+    &image8,
+    &image9,
+    &image10,
+    &image11,
+    &image12,
+    &image13,
+    &image14,
+    &image15,
+    &image16,
+    &image17,
+    &image18,
+    &image19,
+    &image20,
+    &image21,
+    &image22,
+    &image23,
+    &image24,
+    &image25,
+    &image26,
+    &image27,
+    &image28,
+    &image29,
+    &image30,
+    &image31,
+    &image32,
+    &image33,
+    &image34,
+    &image35,
+    &image36,
+    &image37,
+    &image38,
+    &image39,
+    &image40,
+    &image41,
+    &image42,
+    &image43,
+    &image44,
+    &image45,
+    &image46,
+    &image47,
+    &image48,
+    &image49,
+    &image50,
+    &image51,
+    &image52,
+    &image53,
+    &image54,
+    &image55,
+    &image56,
+    &image57,
+    &image58,
+    &image59,
+    &image60,
+    &image61,
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

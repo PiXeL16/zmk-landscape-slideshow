@@ -29,6 +29,14 @@ make generate           # Auto-rename + generate slideshow
 
 The picture displayed on the peripheral screen changes every 10 seconds by default.
 
+## Current Slideshow Preview
+
+![Slideshow Preview](./assets/slideshow_preview.png)
+
+*The above shows all images in your current slideshow (auto-generated after running `make generate`)*
+
+## Original Hammerbeam Art
+
 ![art](./assets/hammerbeam.png)
 
 ![art](./assets/20240913_193934.png)
