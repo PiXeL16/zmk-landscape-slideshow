@@ -17,7 +17,7 @@ manifest:
       # zmk official
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: gpeye                         #new entry
+    - name: PiXeL16                         #new entry
       url-base: https://github.com/PiXeL16 #new entry
   projects:
     - name: zmk
