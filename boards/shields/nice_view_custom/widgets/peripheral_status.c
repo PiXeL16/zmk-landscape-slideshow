@@ -68,22 +68,6 @@ LV_IMG_DECLARE(image42);
 LV_IMG_DECLARE(image43);
 LV_IMG_DECLARE(image44);
 LV_IMG_DECLARE(image45);
-LV_IMG_DECLARE(image46);
-LV_IMG_DECLARE(image47);
-LV_IMG_DECLARE(image48);
-LV_IMG_DECLARE(image49);
-LV_IMG_DECLARE(image50);
-LV_IMG_DECLARE(image51);
-LV_IMG_DECLARE(image52);
-LV_IMG_DECLARE(image53);
-LV_IMG_DECLARE(image54);
-LV_IMG_DECLARE(image55);
-LV_IMG_DECLARE(image56);
-LV_IMG_DECLARE(image57);
-LV_IMG_DECLARE(image58);
-LV_IMG_DECLARE(image59);
-LV_IMG_DECLARE(image60);
-LV_IMG_DECLARE(image61);
 
 const lv_img_dsc_t *anim_imgs[] = {
     &image1,
@@ -131,23 +115,9 @@ const lv_img_dsc_t *anim_imgs[] = {
     &image43,
     &image44,
     &image45,
-    &image46,
-    &image47,
-    &image48,
-    &image49,
-    &image50,
-    &image51,
-    &image52,
-    &image53,
-    &image54,
-    &image55,
-    &image56,
-    &image57,
-    &image58,
-    &image59,
-    &image60,
-    &image61,
 };
+
+
 
 
 
