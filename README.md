@@ -2,7 +2,7 @@
 
 This is a zmk module to implement a slideshow of 50 landscape and animal images based on the Hammerbean Slideshow project.
 
-The picture to be displayed by this module on the peripheral screen will be one of these 30 and will change every 10 seconds.
+The picture to be displayed by this module on the peripheral screen will be one of these 50 and will change every 10 seconds.
 ![art](./assets/slideshow_preview.png)
 
 <!-- ![art](./assets/20240913_193934.png) -->
