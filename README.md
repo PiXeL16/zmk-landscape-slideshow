@@ -1,4 +1,4 @@
-# Landscape Slideshow
+# Landscape & Nature Slideshow
 
 This is a zmk module to implement a slideshow of 50 landscape and animal images based on the Hammerbean Slideshow project.
 
